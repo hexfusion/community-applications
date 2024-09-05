@@ -3,5 +3,6 @@
     "description": "WordPress is open-source software you can use to create a beautiful website, blog, or app.",
     "version": "5.8",
     "image": "https://upload.wikimedia.org/wikipedia/commons/9/93/Wordpress_Blue_logo.png",
-    "url": "https://wordpress.org/"
+    "url": "https://wordpress.org/",
+    "category": "CMS"
   }

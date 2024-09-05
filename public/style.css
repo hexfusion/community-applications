@@ -1,0 +1,199 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Remove margin/padding for header and ensure the background image stretches */
+header {
+  background: url('header-bg.jpg') no-repeat center center;
+  background-size: cover; /* Ensures the image fully covers the header */
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Vertically center the text */
+  color: white;
+  margin: 0;  /* Remove any gaps around the header */
+  padding: 0;
+  /* width: 100vw; Ensure the header takes the full viewport width */
+  box-sizing: border-box; /* Prevent padding from adding to the width */
+}
+
+header h1 {
+  font-size: 3rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Shaded text effect */
+  margin: 0; /* Ensure no extra margin is applied */
+  text-align: center; /* Horizontally center the text */
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #333;
+  padding: 20px;
+  height: 100vh;
+  color: white;
+  position: fixed;
+}
+
+.sidebar h2 {
+  font-size: 1.5rem;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 10px;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin: 10px 0;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+}
+
+.sidebar ul li a:hover {
+  text-decoration: underline;
+}
+
+/* Main content area */
+.content {
+  margin-left: 250px; /* Sidebar width */
+  padding: 0; /* Remove all padding */
+  width: calc(100% - 250px); /* Adjust width accordingly */
+}
+
+/* Add a gutter between the header and the grid */
+.content .grid-container {
+  margin-top: 20px; /* Gutter added between header and grid */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 3in);
+  gap: 20px;
+  justify-content: center; /* Center the grid */
+}
+
+/* Grid item styling */
+.grid-item {
+  background-color: white;
+  border: 2px solid #007bff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.2s ease;
+  word-wrap: break-word;
+  max-width: 3in; /* Ensure max width is 3in */
+}
+
+.grid-item:hover {
+  transform: scale(1.05);
+}
+
+.grid-item img {
+  max-width: 80px;
+  margin-bottom: 10px;
+}
+
+.grid-item h2 {
+  font-size: 1.5rem;
+  margin: 10px 0;
+  word-wrap: break-word;
+}
+
+.grid-item p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+}
+
+.grid-item a {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.grid-item a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .grid-container {
+    grid-template-columns: repeat(auto-fit, 2.5in);
+  }
+
+  .content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  .grid-container {
+    grid-template-columns: repeat(auto-fit, 2in);
+  }
+}
+/* Details box styling */
+.details-box {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Application details layout */
+.application-details {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Image section styling */
+.details-image img {
+  max-width: 250px; /* Slightly smaller image for better spacing */
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Info section styling */
+.details-info {
+  flex-grow: 1; /* Allow the details info to take up remaining space */
+}
+
+.details-info p {
+  font-size: 1rem;
+  color: #333;
+}
+
+.details-info a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.details-info a:hover {
+  text-decoration: underline;
+}

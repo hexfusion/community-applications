@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/json"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 )
 
 type AppMetadata struct {
@@ -15,16 +15,16 @@ type AppMetadata struct {
 	Version     string `json:"version"`
 	Image       string `json:"image"`
 	URL         string `json:"url"`
+	Category    string `json:"category"`
 }
 
 func main() {
-	// Create the build directory if it doesn't exist
-	outputDir := "build"
+	outputDir := "public"
 	if err := os.MkdirAll(outputDir, os.ModePerm); err != nil {
 		log.Fatalf("Failed to create output directory: %v", err)
 	}
 
-	// Load templates
+	// load templates
 	indexTemplate, err := template.ParseFiles("templates/index.html")
 	if err != nil {
 		log.Fatalf("Failed to parse index template: %v", err)
@@ -35,38 +35,43 @@ func main() {
 		log.Fatalf("Failed to parse application template: %v", err)
 	}
 
-	// Collect app metadata from the applications directory
-	apps, err := collectApplications("applications")
+	// sort app metadata from the applications directory
+	appsByCategory, categories, err := collectAndSortApplicationsByCategory("applications")
 	if err != nil {
 		log.Fatalf("Failed to collect applications: %v", err)
 	}
 
-	// Generate index page
-	if err := generateIndexPage(indexTemplate, apps, outputDir); err != nil {
+	// index page
+	if err := generateIndexPage(indexTemplate, appsByCategory, categories, outputDir); err != nil {
 		log.Fatalf("Failed to generate index page: %v", err)
 	}
 
-	// Generate individual application pages
-	for _, app := range apps {
-		if err := generateAppPage(appTemplate, app, outputDir); err != nil {
-			log.Fatalf("Failed to generate page for %s: %v", app.Name, err)
+	// app pages
+	for _, apps := range appsByCategory {
+		for _, app := range apps {
+			if err := generateAppPage(appTemplate, app, outputDir); err != nil {
+				log.Fatalf("Failed to generate page for %s: %v", app.Name, err)
+			}
 		}
 	}
 
-	log.Println("Build completed successfully!")
+	log.Println("Static site generated successfully!")
 }
 
-func collectApplications(appDir string) ([]AppMetadata, error) {
-	var apps []AppMetadata
+// collectAndSortApplicationsByCategory collects apps and groups them by category, then sorts within each category.
+// It also returns a list of unique categories for the sidebar.
+func collectAndSortApplicationsByCategory(appDir string) (map[string][]AppMetadata, []string, error) {
+	appsByCategory := make(map[string][]AppMetadata)
+	uniqueCategories := make(map[string]bool)
 
-	files, err := ioutil.ReadDir(appDir)
+	files, err := os.ReadDir(appDir)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	for _, file := range files {
 		metadataPath := filepath.Join(appDir, file.Name(), "metadata.json")
-		data, err := ioutil.ReadFile(metadataPath)
+		data, err := os.ReadFile(metadataPath)
 		if err != nil {
 			log.Printf("Skipping %s: failed to read metadata: %v", file.Name(), err)
 			continue
@@ -78,25 +83,59 @@ func collectApplications(appDir string) ([]AppMetadata, error) {
 			continue
 		}
 
-		apps = append(apps, app)
+		// Group by category
+		appsByCategory[app.Category] = append(appsByCategory[app.Category], app)
+
+		// Track unique categories for the sidebar
+		uniqueCategories[app.Category] = true
 	}
 
-	return apps, nil
+	// Sort apps within each category
+	for category := range appsByCategory {
+		sort.Slice(appsByCategory[category], func(i, j int) bool {
+			return appsByCategory[category][i].Name < appsByCategory[category][j].Name
+		})
+	}
+
+	// Convert the uniqueCategories map to a sorted slice
+	categories := []string{}
+	for category := range uniqueCategories {
+		categories = append(categories, category)
+	}
+	sort.Strings(categories)
+
+	return appsByCategory, categories, nil
 }
 
-func generateIndexPage(tmpl *template.Template, apps []AppMetadata, outputDir string) error {
-	gridContent := ""
-	for _, app := range apps {
-		gridContent += `
-		<div class="grid-item">
-			<img src="` + app.Image + `" alt="` + app.Name + `" />
-			<h2>` + app.Name + `</h2>
-			<p>` + app.Description + `</p>
-			<a href="` + app.Name + `.html">Read More</a>
-		</div>
-		`
+func generateIndexPage(tmpl *template.Template, appsByCategory map[string][]AppMetadata, categories []string, outputDir string) error {
+	var gridContent string
+
+	// grid content
+	for _, apps := range appsByCategory {
+		gridContent += `<div class="grid-container">` // Start grid for this category
+
+		for _, app := range apps {
+			gridContent += `
+			<div class="grid-item">
+				<img src="` + app.Image + `" alt="` + app.Name + `" />
+				<h2>` + app.Name + `</h2>
+				<p>` + app.Description + `</p>
+				<a href="` + app.Name + `.html">Read More</a>
+			</div>
+			`
+		}
+
+		gridContent += "</div>\n"
 	}
 
+	// sidebar content
+	sidebarContent := "<ul>\n"
+	for _, category := range categories {
+		sidebarContent += `<li><a href="#">` + category + `</a></li>` + "\n"
+	}
+	sidebarContent += "</ul>"
+
+	// create index file
 	file, err := os.Create(filepath.Join(outputDir, "index.html"))
 	if err != nil {
 		return err
@@ -105,6 +144,7 @@ func generateIndexPage(tmpl *template.Template, apps []AppMetadata, outputDir st
 
 	return tmpl.Execute(file, map[string]interface{}{
 		"Content": template.HTML(gridContent),
+		"Sidebar": template.HTML(sidebarContent),
 	})
 }
 

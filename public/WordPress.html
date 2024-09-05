@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ .Name }} - Application Details</title>
+  <title>WordPress - Application Details</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Sidebar -->
+  
   <div class="sidebar">
     <h2>Categories</h2>
     <ul>
@@ -16,22 +16,22 @@
     </ul>
   </div>
 
-  <!-- Main Content Area -->
+  
   <div class="content">
     <header>
-      <h1>{{ .Name }}</h1>
+      <h1>WordPress</h1>
     </header>
 
-    <!-- Application Details Section -->
+    
     <div class="details-box">
       <div class="application-details">
         <div class="details-image">
-          <img src="{{ .Image }}" alt="{{ .Name }}">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Wordpress_Blue_logo.png" alt="WordPress">
         </div>
         <div class="details-info">
-          <p>{{ .Description }}</p>
-          <p>Version: {{ .Version }}</p>
-          <p><a href="{{ .URL }}" target="_blank">Official Website</a></p>
+          <p>WordPress is open-source software you can use to create a beautiful website, blog, or app.</p>
+          <p>Version: 5.8</p>
+          <p><a href="https://wordpress.org/" target="_blank">Official Website</a></p>
         </div>
       </div>
     </div>
