@@ -1,0 +1,13 @@
+apiVersion: v1alpha1
+name: wordpress
+version: 0.0.1
+description: WordPress is a free and open-source content management system (CMS) based on PHP and MySQL.
+maintainers:
+  - name: John Doe
+    email: john@doe.com
+keywords:
+  - wordpress
+  - cms
+  - php
+  - mysql
+thumbnail: /path/to/wordpress.png

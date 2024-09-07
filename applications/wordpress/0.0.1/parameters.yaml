@@ -1,0 +1,44 @@
+
+# list of parameters that will be used in the deployment
+
+# global network
+network:
+  name: my-network
+  driver: bridge
+
+# namespaced compose services
+compose:
+  services:
+    - name: wordpress
+      image:
+        repository: wordpress
+        tag: latest
+      envVars:
+        WORDPRESS_DB_HOST: db:3306
+        WORDPRESS_DB_USER: exampleuser
+        WORDPRESS_DB_PASSWORD: examplepass
+        WORDPRESS_DB_NAME: exampledb
+      volumes:
+        - name: wp-data
+          path: /var/www/html
+          source: /path/to/your/local/wp-data
+      ports:
+        - containerPort: 80
+          hostPort: 8080
+
+    - name: db
+      image:
+        repository: mysql
+        tag: latest
+      envVars:
+        MYSQL_ROOT_PASSWORD: examplepass
+        MYSQL_DATABASE: exampledb
+        MYSQL_USER: exampleuser
+        MYSQL_PASSWORD: examplepass
+      volumes:
+        - name: db-data
+          path: /var/lib/mysql
+          source: /path/to/your/local/db-data
+      ports:
+        - containerPort: 3306
+          hostPort: 3306
